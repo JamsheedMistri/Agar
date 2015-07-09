@@ -14,6 +14,7 @@ import apcs.Window;
 public class Game {
 	
 	static Firebase server = new Firebase("https://agarjava.firebaseio.com/");
+	static int ballNumber = 0;
 
 	public static void main(String[] args) {
 		Window.size(800, 600);
@@ -21,12 +22,12 @@ public class Game {
 
 
 
-		final ArrayList<Player> players = new ArrayList<Player>();
+		ArrayList<Player> players = new ArrayList<Player>();
 
-		server.child("online").child("KIM-JON-UN---from---NORTH-KOREA").setValue(true);
-		server.child("online").child("KIM-JON-UN---from---NORTH-KOREA").onDisconnect().setValue(false);
+		server.child("online").child("Mistri").setValue(true);
+		server.child("online").child("Mistri").onDisconnect().setValue(false);
 
-		Player p = new Player("KIM-JON-UN---from---NORTH-KOREA");
+		Player p = new Player("Mistri");
 
 		server.child("online").addChildEventListener(new ChildEventListener() {
 
@@ -68,50 +69,48 @@ public class Game {
 
 		});
 
-		server.child("KIM-JON-UN---from---NORTH-KOREAx").setValue(p.x);
-		server.child("KIM-JON-UN---from---NORTH-KOREAy").setValue(p.y);
-		server.child("KIM-JON-UN---from---NORTH-KOREAr").setValue(p.radius);
-		server.child("KIM-JON-UN---from---NORTH-KOREAn").setValue(p.name);
+		server.child("Mistrix").setValue(p.x);
+		server.child("Mistriy").setValue(p.y);
+		server.child("Mistrir").setValue(p.radius);
+		server.child("Mistrin").setValue(p.name);
 
 		ArrayList <Blob> blobs = new ArrayList <Blob> ();
 
 
-		for (int i = 0 ; i < 10000 ; i++) {
+		for (int i = 0 ; i < 5000 ; i++) {
 			blobs.add(new Blob());
 		}
 
 
 		while (true) {
-			Window.out.background(250,250,250);
-			for (int i = 0; i < Window.width() + 2; i += 31) {
-				for (int j = 0; j < Window.width() + 1; j += 31) {
-					Window.out.color("white");
-					Window.out.square(i - 2, j - 3, 30);
-				}
+			Window.out.background("white");
 
-			}
-			
 			for (int i = 0; i < players.size(); i++) {
 				players.get(i).draw(p.x, p.y);
 				
 				if (p.checkCollision(players.get(i))) {
 					if (p.radius > players.get(i).radius) {
-						p.radius += players.get(i).radius;
+						p.radius = (int) Math.sqrt(p.radius * p.radius + players.get(i).radius * players.get(i).radius);
 						players.remove(i);
 						i--;
 					}
-//					else {
-//						p = new Player("KIM-JON-UN---from---NORTH-KOREA");
-//					}
+					else if (p.radius < players.get(i).radius){
+						p.x = Window.rollDice(10000);
+						p.y = Window.rollDice(10000);
+						p.radius = 20;
+						server.child("Mistrix").setValue(p.x);
+						server.child("Mistriy").setValue(p.y);
+						server.child("Mistrir").setValue(p.radius);
+					}
 				}
 			}
 
 			p.draw();
-
-			if (p.radius > 100) {
-				p.radius = p.radius * 9 / 10;
-			}
 			
+			if (p.radius > 100) {
+				p.radius = (int) (p.radius - (p.radius * .01));
+			}
+
 			for (int i = 0 ; i < blobs.size() ; i++) {
 				blobs.get(i).draw(p.x, p.y);
 				
@@ -129,10 +128,14 @@ public class Game {
 
 			p.move();
 			
+			if (blobs.size() < 5000) {
+				blobs.add(new Blob());
+			}
+			
 
-			server.child("KIM-JON-UN---from---NORTH-KOREAx").setValue(p.x);
-			server.child("KIM-JON-UN---from---NORTH-KOREAy").setValue(p.y);
-			server.child("KIM-JON-UN---from---NORTH-KOREAr").setValue(p.radius);
+			server.child("Mistrix").setValue(p.x);
+			server.child("Mistriy").setValue(p.y);
+			server.child("Mistrir").setValue(p.radius);
 
 			Window.frame();
 		}
