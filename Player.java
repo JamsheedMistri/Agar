@@ -104,24 +104,22 @@ public class Player {
 	}
 
 	public void draw() {
-
+		
 		Window.out.color(r, g, b);
 		Window.out.circle(Window.width() / 2, Window.height() / 2, radius);
 		Window.out.color("black");
-//		Window.out.font("monospaced", 30);
-		//Window.out.print(name, Window.width()/2 - 40, Window.height()/2);
-		Window.out.print(x, Window.width()/2 - 35, Window.height()/2 + 50);
-		Window.out.print(y, Window.width()/2 - 35, Window.height()/2 + 100);
-
+		Window.out.print(name, Window.width()/2, Window.height()/2);
+		
+		Window.out.print(x, Window.width()/2, Window.height()/2 + 20);
+		Window.out.print(y, Window.width()/2, Window.height()/2 + 40);
+		Window.out.print(radius, Window.width()/2, Window.height()/2 + 60);
 	}
 
 	public void draw(int xoffset, int yoffset) {
 		Window.out.color(r, g, b);
 		Window.out.circle(Window.width() / 2 + (x - xoffset), Window.height() / 2 + (y - yoffset), radius);
 		Window.out.color("black");
-		Window.out.font("monospaced", 30);
-		Window.out.print(name, Window.width() / 2 + (x - xoffset) - 270, Window.height() / 2 + (y - yoffset) - 50);
-		
+		Window.out.print(name, Window.width() / 2 + (x - xoffset), Window.height() / 2 + (y - yoffset));
 	}
 
 	public void move() {
