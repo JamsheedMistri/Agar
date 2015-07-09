@@ -22,7 +22,7 @@ public class Game {
 
 
 
-		ArrayList<Player> players = new ArrayList<Player>();
+		final ArrayList<Player> players = new ArrayList<Player>();
 
 		server.child("online").child("Mistri").setValue(true);
 		server.child("online").child("Mistri").onDisconnect().setValue(false);
