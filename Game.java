@@ -9,7 +9,10 @@ import com.firebase.client.FirebaseError;
 
 import apcs.Window;
 
-
+/********************************************************
+ * FIND AND REPLACE CURRENT NAME WITH NEW NAME, JUST IN THIS TAB!
+ * @author techlab & mistri
+ ********************************************************/
 
 public class Game {
 
@@ -17,11 +20,11 @@ public class Game {
 	static int ballNumber = 0;
 	static int cooldown = 25;
 
-	static Player p = new Player("North Korea");
+	static Player p = new Player("Mistri");
 
 
 	public static void main(String[] args) {
-		Window.size(800, 600);
+		Window.size(1366, 723);
 		Window.setFrameRate(30);
 
 
@@ -35,10 +38,10 @@ public class Game {
 			blobs.add(new Blob());
 		}
 
-		server.child("online").child("North Korea").setValue(true);
-		server.child("online").child("North Korea").onDisconnect().setValue(false);
+		server.child("online").child("Mistri").setValue(true);
+		server.child("online").child("Mistri").onDisconnect().setValue(false);
 
-		p = new Player("North Korea");
+		p = new Player("Mistri");
 
 		server.child("online").addChildEventListener(new ChildEventListener() {
 
@@ -109,7 +112,7 @@ public class Game {
 							p.radius = 20;
 							p.scale = 1;
 							p.setValues();
-							server.child("online/North Korea").removeValue();
+							server.child("online/Mistri").removeValue();
 						}
 				}
 			}
