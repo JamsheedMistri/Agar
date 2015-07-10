@@ -15,6 +15,7 @@ public class Game {
 	
 	static Firebase server = new Firebase("https://agarjava.firebaseio.com/");
 	static int ballNumber = 0;
+	static int cooldown = 25;
 
 	public static void main(String[] args) {
 		Window.size(800, 600);
@@ -23,11 +24,18 @@ public class Game {
 
 
 		final ArrayList<Player> players = new ArrayList<Player>();
+		
+		ArrayList <Blob> blobs = new ArrayList <Blob> ();
 
-		server.child("online").child("Mistri").setValue(true);
-		server.child("online").child("Mistri").onDisconnect().setValue(false);
 
-		Player p = new Player("Mistri");
+		for (int i = 0 ; i < 2000 ; i++) {
+			blobs.add(new Blob());
+		}
+
+		server.child("online").child("North Korea").setValue(true);
+		server.child("online").child("North Korea").onDisconnect().setValue(false);
+
+		Player p = new Player("North Korea");
 
 		server.child("online").addChildEventListener(new ChildEventListener() {
 
@@ -62,29 +70,26 @@ public class Game {
 			}
 
 			@Override
-			public void onChildRemoved(DataSnapshot arg0) {
-				// TODO Auto-generated method stub
-
+			public void onChildRemoved(DataSnapshot data) {
+				String name = data.getKey();
 			}
 
 		});
 
-		server.child("Mistrix").setValue(p.x);
-		server.child("Mistriy").setValue(p.y);
-		server.child("Mistrir").setValue(p.radius);
-		server.child("Mistrin").setValue(p.name);
 
-		ArrayList <Blob> blobs = new ArrayList <Blob> ();
-
-
-		for (int i = 0 ; i < 5000 ; i++) {
-			blobs.add(new Blob());
-		}
 
 
 		while (true) {
-			Window.out.background("white");
+			Window.out.background(250,250,250);
+			for (int i = 0; i < Window.width() + 2; i += 31) {
+				for (int j = 0; j < Window.width() + 1; j += 31) {
+					Window.out.color("white");
+					Window.out.square(i - 2, j - 3, 30);
+				}
 
+			}
+			
+			
 			for (int i = 0; i < players.size(); i++) {
 				players.get(i).draw(p.x, p.y);
 				
@@ -94,28 +99,30 @@ public class Game {
 						players.remove(i);
 						i--;
 					}
-					else if (p.radius < players.get(i).radius){
+					else 
+					if (p.radius < players.get(i).radius){
 						p.x = Window.rollDice(10000);
 						p.y = Window.rollDice(10000);
 						p.radius = 20;
-						server.child("Mistrix").setValue(p.x);
-						server.child("Mistriy").setValue(p.y);
-						server.child("Mistrir").setValue(p.radius);
+						p.setValues();
+						server.child("online/North Korea").removeValue();
 					}
 				}
 			}
 
 			p.draw();
 			
-			if (p.radius > 100) {
+			if (p.radius > 100 && cooldown >= 25) {
 				p.radius = (int) (p.radius - (p.radius * .01));
+				cooldown = 0;
 			}
 
 			for (int i = 0 ; i < blobs.size() ; i++) {
 				blobs.get(i).draw(p.x, p.y);
 				
 				if (p.checkCollision(blobs.get(i))) {
-					blobs.remove(i);
+					blobs.get(i).reset();
+					blobs.get(i).setValues();
 					p.radius += 1;
 					i--;
 				}
@@ -133,9 +140,9 @@ public class Game {
 			}
 			
 
-			server.child("Mistrix").setValue(p.x);
-			server.child("Mistriy").setValue(p.y);
-			server.child("Mistrir").setValue(p.radius);
+			p.setValues();
+			
+			cooldown++;
 
 			Window.frame();
 		}
