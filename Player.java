@@ -10,8 +10,10 @@ public class Player {
 
 	int x, y, radius;
 	int r, g, b;
-	int scale = 1;
+	//int dx, dy;
 	String name;
+	boolean setName = false;
+	int scale = 1;
 
 	public Player(String name) {
 		x = Window.rollDice(10000);
@@ -23,14 +25,31 @@ public class Player {
 		radius = 20;
 		setValues();
 		addListeners();
-
+		setName = true;
 	}
 	
+	public void checkBorders() {
+		if (x < 0) {
+			x = 0;
+		}
+		if (y < 0) {
+			y = 0;
+		}
+		if (y > 10000) {
+			y = 10000;
+		}
+		if (x > 10000) {
+			x = 10000;
+		}
+	}
+
 	public void setValues() {
 		Game.server.child(name).child(name+"x").setValue(x);
 		Game.server.child(name).child(name+"y").setValue(y);
 		Game.server.child(name).child(name+"r").setValue(radius);
-		Game.server.child(name).child(name+"n").setValue(name);
+		if (!setName) {
+			Game.server.child(name).child(name+"n").setValue(name);
+		}
 	}
 
 	public void addListeners() {
@@ -112,7 +131,14 @@ public class Player {
 	}
 
 	public void draw() {
+		// draw circle
+		Window.out.color(r, g, b);
 		
+		if (radius > scale * 100) {
+			scale++;
+		}
+		
+
 		Window.out.color(r, g, b);
 		Window.out.circle(Window.width() / 2, Window.height() / 2, radius / scale);
 		Window.out.color("black");
@@ -126,12 +152,14 @@ public class Player {
 
 	public void draw(int xoffset, int yoffset) {
 		Window.out.color(r, g, b);
-		Window.out.circle(Window.width() / 2 + (x - xoffset), Window.height() / 2 + (y - yoffset), radius / scale);
+		Window.out.circle((Window.width() / 2 + (x - xoffset)) / scale
+				, (Window.height() / 2 + (y - yoffset)) / scale, radius / scale);
 		Window.out.color("black");
-		Window.out.print(name, Window.width() / 2 + (x - xoffset) - 40, Window.height() / 2 + (y - yoffset) - 20);
+		Window.out.print(name, Window.width() / 2 + (x - xoffset) - 40, Window.height() / 2 + (y - yoffset) - 40);
 	}
 
 	public void move() {
+		
 		if (radius > 500) {
 			radius = 500;
 		}
@@ -152,21 +180,6 @@ public class Player {
 		checkBorders();
 	}
 
-	public void checkBorders() {
-		if (x < 0) {
-			x = 0;
-		}
-		if (y < 0) {
-			y = 0;
-		}
-		if (x > 10000) {
-			x = 10000;
-		}
-		if (y > 10000) {
-			y = 10000;
-		}
-	}
-	
 	public boolean checkCollision(Blob blob) {
 
 		int a = x - blob.x;
@@ -180,12 +193,12 @@ public class Player {
 
 		return false;
 	}
-	
+
 	public boolean checkCollision(Player p) {
 		if (name.equals(p.name)) {
 			return false;
 		}
-		
+
 		int a = x - p.x;
 		int b = y - p.y;
 		int c = radius + p.radius;
