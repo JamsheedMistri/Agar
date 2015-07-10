@@ -12,11 +12,14 @@ import apcs.Window;
 
 
 public class Game {
-	
+
 	static Firebase server = new Firebase("https://agarjava.firebaseio.com/");
 	static int ballNumber = 0;
 	static int cooldown = 25;
-
+	
+	static Player p = new Player("North Korea");
+	
+	
 	public static void main(String[] args) {
 		Window.size(800, 600);
 		Window.setFrameRate(30);
@@ -24,7 +27,7 @@ public class Game {
 
 
 		final ArrayList<Player> players = new ArrayList<Player>();
-		
+
 		ArrayList <Blob> blobs = new ArrayList <Blob> ();
 
 
@@ -35,7 +38,7 @@ public class Game {
 		server.child("online").child("North Korea").setValue(true);
 		server.child("online").child("North Korea").onDisconnect().setValue(false);
 
-		Player p = new Player("North Korea");
+		p = new Player("North Korea");
 
 		server.child("online").addChildEventListener(new ChildEventListener() {
 
@@ -49,17 +52,21 @@ public class Game {
 			public void onChildAdded(DataSnapshot data, String _) {
 				String name = data.getKey();
 				players.add(new Player(name));
-				
+				if (name.equals(p.name)) {
+					p = players.get(players.size() - 1);
+				}
+
 			}
 
 			@Override
 			public void onChildChanged(DataSnapshot data, String _) {
 				String name = data.getKey();
 				if ((Boolean) data.getValue()) {
-					System.out.println(name + " is online");
+					System.out.println(name + " is online.");
 				}
 				else {
-					System.out.println(name + " is not online");
+					System.out.println(name + " is no longer online.");
+					server.child(name).removeValue();
 				}
 			}
 
@@ -88,38 +95,42 @@ public class Game {
 				}
 
 			}
-			
-			
+
+
+
 			for (int i = 0; i < players.size(); i++) {
-				players.get(i).draw(p.x, p.y);
-				
+				if (!players.get(i).name.equals(p.name)) {
+					players.get(i).draw(p.x, p.y, p.scale);
+				}
+
 				if (p.checkCollision(players.get(i))) {
 					if (p.radius > players.get(i).radius) {
-						p.radius = (int) Math.sqrt(p.radius * p.radius + players.get(i).radius * players.get(i).radius);
+						p.radius += (int) players.get(i).radius / 4;
 						players.remove(i);
 						i--;
 					}
 					else 
-					if (p.radius < players.get(i).radius){
-						p.x = Window.rollDice(10000);
-						p.y = Window.rollDice(10000);
-						p.radius = 20;
-						p.setValues();
-						server.child("online/North Korea").removeValue();
-					}
+						if (p.radius < players.get(i).radius){
+							p.x = Window.rollDice(10000);
+							p.y = Window.rollDice(10000);
+							p.radius = 20;
+							p.scale = 1;
+							p.setValues();
+							server.child("online/North Korea").removeValue();
+						}
 				}
 			}
 
 			p.draw();
-			
+
 			if (p.radius > 100 && cooldown >= 25) {
 				p.radius = (int) (p.radius - (p.radius * .01));
 				cooldown = 0;
 			}
 
 			for (int i = 0 ; i < blobs.size() ; i++) {
-				blobs.get(i).draw(p.x, p.y);
-				
+				blobs.get(i).draw(p.x, p.y, p.scale);
+
 				if (p.checkCollision(blobs.get(i))) {
 					blobs.get(i).reset();
 					blobs.get(i).setValues();
@@ -130,18 +141,18 @@ public class Game {
 
 			if (p.x > 9600) {
 				Window.out.color("black");
-				Window.out.square(10800 - p.x, 400, 800);
+				//Window.out.square(10800 - p.x, 400, 800);
 			}
 
 			p.move();
-			
+
 			if (blobs.size() < 5000) {
 				blobs.add(new Blob());
 			}
-			
+
 
 			p.setValues();
-			
+
 			cooldown++;
 
 			Window.frame();
