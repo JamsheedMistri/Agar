@@ -10,7 +10,7 @@ public class Player {
 
 	int x, y, radius;
 	int r, g, b;
-	//int dx, dy;
+	int scale = 1;
 	String name;
 
 	public Player(String name) {
@@ -114,7 +114,7 @@ public class Player {
 	public void draw() {
 		
 		Window.out.color(r, g, b);
-		Window.out.circle(Window.width() / 2, Window.height() / 2, radius);
+		Window.out.circle(Window.width() / 2, Window.height() / 2, radius / scale);
 		Window.out.color("black");
 		Window.out.font("monospaced", 20);
 		Window.out.print(name, Window.width()/2 - 40, Window.height()/2 - 20);
@@ -126,7 +126,7 @@ public class Player {
 
 	public void draw(int xoffset, int yoffset) {
 		Window.out.color(r, g, b);
-		Window.out.circle(Window.width() / 2 + (x - xoffset), Window.height() / 2 + (y - yoffset), radius);
+		Window.out.circle(Window.width() / 2 + (x - xoffset), Window.height() / 2 + (y - yoffset), radius / scale);
 		Window.out.color("black");
 		Window.out.print(name, Window.width() / 2 + (x - xoffset) - 40, Window.height() / 2 + (y - yoffset) - 20);
 	}
@@ -148,8 +148,25 @@ public class Player {
 
 		x = x + dx;
 		y = y + dy;
+		
+		checkBorders();
 	}
 
+	public void checkBorders() {
+		if (x < 0) {
+			x = 0;
+		}
+		if (y < 0) {
+			y = 0;
+		}
+		if (x > 10000) {
+			x = 10000;
+		}
+		if (y > 10000) {
+			y = 10000;
+		}
+	}
+	
 	public boolean checkCollision(Blob blob) {
 
 		int a = x - blob.x;
