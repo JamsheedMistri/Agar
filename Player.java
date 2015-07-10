@@ -21,12 +21,20 @@ public class Player {
 		b = Window.rollDice(256) - 1;
 		this.name = name;
 		radius = 20;
+		setValues();
 		addListeners();
 
 	}
+	
+	public void setValues() {
+		Game.server.child(name).child(name+"x").setValue(x);
+		Game.server.child(name).child(name+"y").setValue(y);
+		Game.server.child(name).child(name+"r").setValue(radius);
+		Game.server.child(name).child(name+"n").setValue(name);
+	}
 
 	public void addListeners() {
-		Game.server.child(name+"x").addValueEventListener(new ValueEventListener() {
+		Game.server.child(name).child(name+"x").addValueEventListener(new ValueEventListener() {
 
 			@Override
 			public void onCancelled(FirebaseError arg0) {
@@ -45,7 +53,7 @@ public class Player {
 
 		});
 
-		Game.server.child(name+"y").addValueEventListener(new ValueEventListener() {
+		Game.server.child(name).child(name+"y").addValueEventListener(new ValueEventListener() {
 
 			@Override
 			public void onCancelled(FirebaseError arg0) {
@@ -64,7 +72,7 @@ public class Player {
 
 		});
 
-		Game.server.child(name+"r").addValueEventListener(new ValueEventListener() {
+		Game.server.child(name).child(name+"r").addValueEventListener(new ValueEventListener() {
 
 			@Override
 			public void onCancelled(FirebaseError arg0) {
@@ -83,7 +91,7 @@ public class Player {
 
 		});
 
-		Game.server.child(name+"n").addValueEventListener(new ValueEventListener() {
+		Game.server.child(name).child(name+"n").addValueEventListener(new ValueEventListener() {
 
 			@Override
 			public void onCancelled(FirebaseError arg0) {
@@ -108,21 +116,25 @@ public class Player {
 		Window.out.color(r, g, b);
 		Window.out.circle(Window.width() / 2, Window.height() / 2, radius);
 		Window.out.color("black");
-		Window.out.print(name, Window.width()/2, Window.height()/2);
+		Window.out.font("monospaced", 20);
+		Window.out.print(name, Window.width()/2 - 40, Window.height()/2 - 20);
 		
-		Window.out.print(x, Window.width()/2, Window.height()/2 + 20);
-		Window.out.print(y, Window.width()/2, Window.height()/2 + 40);
-		Window.out.print(radius, Window.width()/2, Window.height()/2 + 60);
+		Window.out.print("x: " + x, 20, 20);
+		Window.out.print("y: " + y, 20, 40);
+		Window.out.print("radius: " + radius, 20, 60);
 	}
 
 	public void draw(int xoffset, int yoffset) {
 		Window.out.color(r, g, b);
 		Window.out.circle(Window.width() / 2 + (x - xoffset), Window.height() / 2 + (y - yoffset), radius);
 		Window.out.color("black");
-		Window.out.print(name, Window.width() / 2 + (x - xoffset), Window.height() / 2 + (y - yoffset));
+		Window.out.print(name, Window.width() / 2 + (x - xoffset) - 40, Window.height() / 2 + (y - yoffset) - 20);
 	}
 
 	public void move() {
+		if (radius > 500) {
+			radius = 500;
+		}
 		// Get the raw difference i
 		int dx = Window.mouse.getX() - Window.width() / 2;
 		int dy = Window.mouse.getY() - Window.height() / 2;
@@ -153,7 +165,7 @@ public class Player {
 	}
 	
 	public boolean checkCollision(Player p) {
-		if (p == this) {
+		if (name.equals(p.name)) {
 			return false;
 		}
 		
