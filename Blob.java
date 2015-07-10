@@ -35,16 +35,21 @@ public class Blob {
 		Game.server.child("ball").child("bally"+Game.ballNumber).setValue(y);
 		Game.server.child("ball").child("ballr"+Game.ballNumber).setValue(radius);
 	}
-
-	public void reset() {
-		x = Window.rollDice(10001) - 1;
-		y = Window.rollDice(10001) - 1;
-	}
 	
-	public void draw(int xoffset, int yoffset) {
-		if (Math.abs(x - xoffset) <= Window.width() / 2 && Math.abs(y - yoffset) <= Window.height() / 2) {
+	public void reset() {
+		x = Window.rollDice(10000);
+		y = Window.rollDice(10000);
+	}
+
+	public void draw(int xoffset, int yoffset, int scale) {
+		if (Math.abs(x - xoffset) <= (Window.width() / 2) * scale && Math.abs(y - yoffset) <= (Window.height() / 2) * scale) {
 			Window.out.color(r, g, b);
-			Window.out.circle(Window.width() / 2 + (x - xoffset), Window.height() / 2 + (y - yoffset), radius);
+			int viewRadius = radius / scale;
+			if (viewRadius <= 0) {
+				viewRadius = 1;
+			}
+			Window.out.circle(Window.width() / 2 + (x - xoffset)/scale
+					, Window.height() / 2 + (y - yoffset)/scale, radius/scale);
 		}
 	}
 }
