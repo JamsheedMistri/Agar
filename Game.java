@@ -16,10 +16,10 @@ public class Game {
 	static Firebase server = new Firebase("https://agarjava.firebaseio.com/");
 	static int ballNumber = 0;
 	static int cooldown = 25;
-	
+
 	static Player p = new Player("North Korea");
-	
-	
+
+
 	public static void main(String[] args) {
 		Window.size(800, 600);
 		Window.setFrameRate(30);
@@ -85,16 +85,9 @@ public class Game {
 
 
 
-
 		while (true) {
-			Window.out.background(250,250,250);
-			for (int i = 0; i < Window.width() + 2; i += 31) {
-				for (int j = 0; j < Window.width() + 1; j += 31) {
-					Window.out.color("white");
-					Window.out.square(i - 2, j - 3, 30);
-				}
-
-			}
+			Window.out.background(240,240,240);
+			drawGrid();
 
 
 
@@ -156,6 +149,20 @@ public class Game {
 			cooldown++;
 
 			Window.frame();
+		}
+	}
+
+	public static void drawGrid() {
+		for (int i = 0; i < 10000; i += 31) {
+			for (int j = 0; j < 10000; j += 31) {
+				if (Math.abs(i - p.x) <= (Window.width() / 2) * p.scale + 25  &&
+						Math.abs(j - p.y) <= (Window.height() / 2) * p.scale + 25) {
+					Window.out.color("white");
+					Window.out.square(Window.width() / 2 + (i - 2 - p.x) / p.scale,
+							Window.height() / 2 + (j - 3 - p.y) / p.scale, 30 / p.scale);
+				}
+			}
+
 		}
 	}
 
