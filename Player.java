@@ -139,29 +139,30 @@ public class Player {
 		}
 		
 
-		Window.out.color(r, g, b);
 		Window.out.circle(Window.width() / 2, Window.height() / 2, radius / scale);
+		// draw name
 		Window.out.color("black");
 		Window.out.font("monospaced", 20);
-		Window.out.print(name, Window.width()/2 - 40, Window.height()/2 - 20);
+		Window.out.print(name, Window.width()/2 - 60, Window.height()/2 - 20);
 		
+		// draw x, y, and radius
 		Window.out.print("x: " + x, 20, 20);
 		Window.out.print("y: " + y, 20, 40);
 		Window.out.print("radius: " + radius, 20, 60);
 	}
 
-	public void draw(int xoffset, int yoffset) {
+	public void draw(int xoffset, int yoffset, int scale) {
 		Window.out.color(r, g, b);
-		Window.out.circle((Window.width() / 2 + (x - xoffset)) / scale
-				, (Window.height() / 2 + (y - yoffset)) / scale, radius / scale);
+		Window.out.circle(Window.width() / 2 + (x - xoffset) / scale
+				, Window.height() / 2 + (y - yoffset) / scale, radius / scale);
 		Window.out.color("black");
 		Window.out.print(name, Window.width() / 2 + (x - xoffset) - 40, Window.height() / 2 + (y - yoffset) - 40);
 	}
 
 	public void move() {
 		
-		if (radius > 500) {
-			radius = 500;
+		if (radius > 2000) {
+			radius = 2000;
 		}
 		// Get the raw difference i
 		int dx = Window.mouse.getX() - Window.width() / 2;
